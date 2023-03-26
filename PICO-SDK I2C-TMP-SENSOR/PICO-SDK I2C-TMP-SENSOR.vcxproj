@@ -131,13 +131,18 @@
     <ClCompile Include="I2CBusScanner.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="TemperatureSensor.cpp" />
+    <ClCompile Include="util.cpp" />
     <ClCompile Include="View.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Controller.h" />
     <ClInclude Include="I2CBusScanner.h" />
     <ClInclude Include="TemperatureSensor.h" />
+    <ClInclude Include="util.h" />
     <ClInclude Include="View.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
