@@ -165,8 +165,7 @@ bool TemperatureSensor::handle_temp_limit_settings(){
 
     // Set the temperature alarm limits in the temperature sensor
     if (set_temperature_alarm_limit_min(min_temperature_fixed) &&
-        set_temperature_alarm_limit_max(max_temperature_fixed) &&
-        set_temperature_alarm_limit_min(min_temperature_fixed)) {
+        set_temperature_alarm_limit_max(max_temperature_fixed)) {
         printf("\nTemperature alarm limits updated.\n");
         return true;
     }
