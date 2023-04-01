@@ -9,6 +9,8 @@ void clear_console() {
 
 void View::show_config_menu() {
     printf("Configuration menu:\n");
+    // List available configuration options
+    // Some options are not implemented yet
     printf("[0] Shutdown Setting\n");
     printf("[1] Comp/Int Select (not implemented)\n");
     printf("[2] ALERT POLARITY (not implemented)\n");
@@ -20,6 +22,7 @@ void View::show_config_menu() {
 
 void View::show_main_menu() {
     printf("Main menu:\n");
+    // List available main menu options
     printf("[0] I2C Bus Scan\n");
     printf("[1] Configuration Menu\n");
     printf("[2] Device ID Menu\n");
@@ -27,13 +30,16 @@ void View::show_main_menu() {
     printf("[4] Read Temperature\n");
 }
 
+// Display the shutdown submenu
 void View::show_shutdown_submenu() {
     printf("Shutdown submenu:\n");
+    // List available shutdown submenu options
     printf("[0] Disable Shutdown\n");
     printf("[1] Enable Shutdown\n");
     printf("[x] Back to main menu\n");
 }
 
+// Display the device ID menu
 void View::show_device_id_menu() {
     clear_console();
     int available_ids[] = { 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F };
@@ -46,13 +52,14 @@ void View::show_device_id_menu() {
     printf("[x] Return to main\n");
 }
 
+// Show I2C bus scan results
 void View::show_i2c_bus_scan() {
     clear_console();
     scanner.scan();
 }
 
 
-
+// Print success or failure message based on the provided boolean value
 void View::success_or_fail(bool success) {
     if (success) {
         printf("Success\n");
@@ -62,10 +69,12 @@ void View::success_or_fail(bool success) {
     }
 }
 
+// Print alert message
 void View::print_alert() {
     printf("Alert activated!");
 }
 
+// Print success or failure message for changing device ID
 void View::success_or_fail_id(bool success, uint8_t device_id) {
     if (success) {
         printf("Device ID successfully changed to 0x%02X\n", device_id);
@@ -76,6 +85,7 @@ void View::success_or_fail_id(bool success, uint8_t device_id) {
     }
 }
 
+// Print temperature values in Celsius and Fahrenheit
 void View::print_temperature(float temp_c, float temp_f) {
     if (first_temp_call) {
         std::cout << std::left << std::fixed << std::setprecision(1) << std::setw(15) << "Temperature" << std::setw(7) << "C" << "F" << std::endl;

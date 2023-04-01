@@ -2,23 +2,30 @@
 #include "pico/stdlib.h"
 #include <map>
 
+// Initialize the controller instance to nullptr
 Controller* controller_instance = nullptr;
 
+// Constructor for the Controller class
 Controller::Controller(const std::vector<uint8_t>& button_pins) : 
     last_button_press(0), 
     green_led_pin(LED0), 
     red_led_pin(LED1), 
     button_pins(button_pins) {
+
+    // Set the controller instance to this object
     controller_instance = this;
 
+    // Initialize GPIO pins for the LED lights and set their direction to output
     gpio_init(green_led_pin);
     gpio_set_dir(green_led_pin, GPIO_OUT);
     gpio_init(red_led_pin);
     gpio_set_dir(red_led_pin, GPIO_OUT);
+
+    // Initialize state-related variables
     state_changed = true;
     has_alert = false;
 
-    // Initialize all the buttons
+    // Initialize all the buttons and set up their interrupt handlers
     for (const auto& button_pin : button_pins) {
         gpio_init(button_pin);
         gpio_set_dir(button_pin, GPIO_IN);
@@ -26,10 +33,12 @@ Controller::Controller(const std::vector<uint8_t>& button_pins) :
         gpio_set_irq_enabled_with_callback(button_pin, GPIO_IRQ_EDGE_FALL, true, &Controller::button_isr);
     }
 
+    // Initialize pending device ID and shutdown state
     uint8_t pending_device_id = 0x48;
     bool pending_shutdown_state = false;
     int8_t last_button = -1;
 
+    // Define state transitions for the controller
     state_transitions = {
         // MAIN_MENU transitions
         {{MAIN_MENU, 0}, I2C_BUS_SCAN},
@@ -71,6 +80,8 @@ Controller::Controller(const std::vector<uint8_t>& button_pins) :
     };
 
 }
+
+// Interrupt service routine for handling button presses
 void Controller::button_isr(uint gpio, uint32_t events) {
     if (controller_instance != nullptr && (time_us_64() - controller_instance->last_button_press) > 200000) { // 200 ms debounce
         controller_instance->last_button = 15 - gpio;
@@ -97,6 +108,7 @@ void Controller::button_isr(uint gpio, uint32_t events) {
     }
 }
 
+// Display the appropriate view based on the current state
 void Controller::display_view() {
 
     if (has_alert) {
@@ -142,7 +154,7 @@ void Controller::display_view() {
     }
 }
 
-
+// Blink the specified LED for the given count and duration
 void Controller::blink_led(uint8_t led_pin, int count, int duration_ms) {
     for (int i = 0; i < count; ++i) {
         gpio_put(led_pin, 1);
@@ -152,6 +164,7 @@ void Controller::blink_led(uint8_t led_pin, int count, int duration_ms) {
     }
 }
 
+// Blink the green LED on success, or the red LED on failure
 void Controller::blink_led_on_success(bool success) {
     if (success) {
         blink_led(green_led_pin, 4, 250);
@@ -161,6 +174,7 @@ void Controller::blink_led_on_success(bool success) {
     }
 }
 
+// Enable or disable shutdown based on the last_button value
 void Controller::shutdown_enable() {
     
     // Enable shutdown if the last button is 1, disable if 0.

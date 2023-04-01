@@ -1,3 +1,4 @@
+// Include necessary header files
 #include "TemperatureSensor.h"
 #include <stdio.h>
 #include "pico/stdlib.h"
@@ -9,16 +10,19 @@
 #include <string>
 #include "util.h"
 
+// Define necessary constants
 #define TEMP_REG 0x00
 #define CONFIG_REG 0x01
 #define TCN75A_ADDR 0x48
 #define I2C_PORT i2c0
 
-float string_to_float(const std::string& input) {
+// Convert a string to a floating-point number
+  float string_to_float(const std::string& input) {
     float value = std::stof(input);
     return value;
 }
 
+// Initialize the TemperatureSensor object
 TemperatureSensor::TemperatureSensor() {
     stdio_init_all();
     setup_i2c();
@@ -26,6 +30,7 @@ TemperatureSensor::TemperatureSensor() {
     device_addr = TCN75A_ADDR;
 }
 
+// Read the raw temperature value from the sensor
 bool TemperatureSensor::read_temperature_raw(int16_t& temperature) {
     uint8_t buffer[2];
     uint8_t temp_reg = TEMP_REG;
@@ -70,11 +75,13 @@ void TemperatureSensor::setup_i2c() {
     gpio_pull_up(PICO_DEFAULT_I2C_SCL_PIN);
 }
 
+// Change and verify the configuration register (currently not implemented)
 bool TemperatureSensor::change_and_verify_register() {
     return false;
     // Implement code to change the configuration register
 }
 
+// Set the shutdown bit in the configuration register
 bool TemperatureSensor::set_shutdown_bit(bool shutdown) {
     uint8_t config_reg = CONFIG_REG;
     uint8_t config_data[1];
@@ -109,6 +116,7 @@ bool TemperatureSensor::set_shutdown_bit(bool shutdown) {
     }
 }
 
+// Set the device_id of the sensor
 bool TemperatureSensor::set_device_id(uint8_t device_id) {
     // Check if the device_id is valid (0x48 to 0x4F)
     if (device_id < 0x48 || device_id > 0x4F) {
@@ -134,6 +142,7 @@ bool TemperatureSensor::set_device_id(uint8_t device_id) {
     }
 }
 
+// Handle temperature alarm settings for the temperature sensor
 bool TemperatureSensor::handle_temp_limit_settings(){
     printf("Temperature Alarm Settings (C):\n");
     printf("Your current min: %f\nYour current max: %f\n",
@@ -175,6 +184,7 @@ bool TemperatureSensor::handle_temp_limit_settings(){
     }
 }
 
+// Set the temperature alarm limit max
 float TemperatureSensor::read_temperature_alarm_limit_max() {
     uint8_t buffer[2];
     uint8_t tset_reg = TSET_REG;
@@ -188,6 +198,7 @@ float TemperatureSensor::read_temperature_alarm_limit_max() {
     return max_temperature;
 }
 
+// Set the temperature alarm limit min
 float TemperatureSensor::read_temperature_alarm_limit_min() {
     uint8_t buffer[2];
     uint8_t thyst_reg = THYST_REG;
@@ -201,6 +212,7 @@ float TemperatureSensor::read_temperature_alarm_limit_min() {
     return min_temperature;
 }
 
+// Set the maximum temperature alarm limit
 bool TemperatureSensor::set_temperature_alarm_limit_max(uint16_t max_temp_fixed) {
     uint8_t data[3];
     data[0] = TSET_REG;
@@ -211,6 +223,7 @@ bool TemperatureSensor::set_temperature_alarm_limit_max(uint16_t max_temp_fixed)
 
 }
 
+// Set the minimum temperature alarm limit
 bool TemperatureSensor::set_temperature_alarm_limit_min(uint16_t min_temp_fixed) {
     uint8_t data[3];
     data[0] = THYST_REG;
